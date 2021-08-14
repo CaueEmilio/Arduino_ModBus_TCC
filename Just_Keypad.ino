@@ -1,18 +1,18 @@
 #include <Keypad.h>
 
-const byte ROWS = 4; //four rows
-const byte COLS = 4; //four columns
-//define the cymbols on the buttons of the keypads
+const byte ROWS = 4; //Quatro linhas
+const byte COLS = 4; //Quatro colunas
+//define os simbolos em cada botão do teclado
 char Keys[ROWS][COLS] = {
   {'1','2','3','A'},
   {'4','5','6','B'},
   {'7','8','9','C'},
   {'*','0','#','D'}
 };
-byte rowPins[ROWS] = {3, 4, 5, 6}; //connect to the row pinouts of the keypad
-byte colPins[COLS] = {7, 8, 9, 10}; //connect to the column pinouts of the keypad
+byte rowPins[ROWS] = {3, 4, 5, 6}; //Conecta as linhas à estes pinos do teclado
+byte colPins[COLS] = {7, 8, 9, 10}; //Conecta as colunas à estes pinos do teclado
 
-//initialize an instance of class NewKeypad
+//Inicializa uma nova instância de teclado
 Keypad Teclas = Keypad( makeKeymap(Keys), rowPins, colPins, ROWS, COLS); 
 
 byte ledPin = 13;
@@ -23,18 +23,18 @@ boolean envia = false;
 
 void setup(){
   Serial.begin(9600);
-  pinMode(ledPin, OUTPUT);      // sets the digital pin as output
-  digitalWrite(ledPin, HIGH);   // sets the LED on
-  Teclas.addEventListener(keypadEvent); //add an event listener for this keypad
+  pinMode(ledPin, OUTPUT);      
+  digitalWrite(ledPin, HIGH);   
+  Teclas.addEventListener(keypadEvent); //Cria um ouvinte de eventos do teclado
 }
 
 void loop(){
-  char tecla = Teclas.getKey();
+  char tecla = Teclas.getKey(); //Recebe a tecla pressionada
 
-  if (envia) {
-    Serial.println(apto);
-    digitalWrite(ledPin,!digitalRead(ledPin));
-    envia = false;
+  if (envia) { //Apenas envia a mensagem se toda a palavra foi escrita
+    Serial.println(apto); //Imprime as teclas pressionadas (Apenas verificação) 
+    digitalWrite(ledPin,!digitalRead(ledPin)); //Inverte o LED
+    envia = false;  //Prepara o código para esperar por novas mensagens
   }
   if (blink){
     digitalWrite(ledPin,!digitalRead(ledPin));
@@ -42,11 +42,12 @@ void loop(){
   }
 }
 
-//take care of some special events
+// Eventos especiais
 void keypadEvent(KeypadEvent tecla){
   switch (Teclas.getState()){
     case PRESSED:
       switch (tecla){
+      //Numeros só podem ocupar entre o 2º e o 4º espaço da memória
         case '1':
           if (n>0 && n<4){
             apto[n] = 49;
@@ -157,6 +158,7 @@ void keypadEvent(KeypadEvent tecla){
             }
           break;
           
+        //Letras só podem ocupar o 1º espaço da memória  
         case 'A':
           if (n==0){
             apto[n] = 65;
@@ -200,7 +202,8 @@ void keypadEvent(KeypadEvent tecla){
             n = 0;
             }
           break;
-            
+        
+        //Cerquilha envia a mensagem se estiver no 5º espaço e apaga a mensagem se estiver em qualquer outro
         case '#': 
           if (n == 4){
             envia = true;
@@ -213,6 +216,7 @@ void keypadEvent(KeypadEvent tecla){
           }
           break;
         
+        //Asterísco apaga a mensagem  
         case '*': 
           memset(apto, 0, sizeof(apto));
           n = 0;
