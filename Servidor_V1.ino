@@ -40,7 +40,7 @@ void loop() {
     if (bl == 'B') telegram.u8id = 2; // Endereço cliente 2
     if (bl == 'C') telegram.u8id = 3; // Endereço cliente 3
     if (bl == 'D') telegram.u8id = 4; // Endereço cliente 4
-    else telegram.u8id = 5; //Endereço que não leva à nenhum cliente caso ocorra algum erro
+    else {u8state=0; break;} //Retorna ao estado inicial para fazer outra requisição
     telegram.u8fct = 6; // código da função (6 é escrita de registrador)
     telegram.u16RegAdd = 0; // Endereço que começa a ser lido o registrador do cliente
     telegram.u16CoilsNo = regSize; // Número de registradores a serem lidos (função 6 aceita apenas 1 e função 16 aceita n)
